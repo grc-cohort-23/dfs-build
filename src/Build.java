@@ -18,17 +18,17 @@ public class Build {
     printShortWords(vertex, k, new HashSet<Vertex<String>>());
   }
 
-  public static void printShortWords(Vertex<String> vertex, int k, Set<Vertex<String>> visited) {
-    if (vertex == null || visited.contains(vertex)) return;
+  private static void printShortWords(Vertex<String> current, int k, Set<Vertex<String>> visited) {
+    if (current == null || visited.contains(current)) return;
 
-    visited.add(vertex);
+    visited.add(current);
 
-    if (vertex.data.length() < k) {
-      System.out.println(vertex.data);
+    if (current.data.length() < k) {
+      System.out.println(current.data);
     }
 
-    for (Vertex<String> neighbor : vertex.neighbors) {
-      printShortWords(vertex, k, visited);
+    for (Vertex<String> neighbor : current.neighbors) {
+      printShortWords(current, k, visited);
     }
 
   }
@@ -51,6 +51,15 @@ public class Build {
    * @param <T> the type of values stored in the vertices
    */
   public static <T> void printSelfLoopers(Vertex<T> vertex) {
+
+    printSelfLoopers(vertex, new HashSet<Vertex<T>>());
+
+  }
+
+  private static <T> void printSelfLoopers(Vertex<T> current, Set<Vertex<T>> visited) {
+      if (current == null || visited.contains(current)) return;
+
+      visited.
   }
 
   /**
