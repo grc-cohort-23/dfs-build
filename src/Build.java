@@ -16,14 +16,36 @@ public class Build {
   public static void printShortWords(Vertex<String> vertex, int k) {
   }
 
-  /**
+
+
+
+  /** // DO THIS
    * Returns the longest word reachable from the given vertex, including its own value.
    *
    * @param vertex the starting vertex
    * @return the longest reachable word, or an empty string if the vertex is null
    */
   public static String longestWord(Vertex<String> vertex) {
-    return "";
+    if(vertex == null) return "";
+    Set<Vertex<String>> visited = new HashSet<>();
+    return longestWordHelper(vertex,visited);
+  }
+
+  private static String longestWordHelper(Vertex<String> vertex, Set<Vertex<String>> visited ) {
+
+    if(visited.contains(vertex)) {
+      return "";
+    }
+    visited.add(vertex);
+    String longestStr = vertex.data;
+
+    for(Vertex<String> wordNeighbor : vertex.neighbors) {
+      String result = longestWordHelper(wordNeighbor, visited);
+      if(longestStr.length() < result.length()) {
+        longestStr = result;
+      }
+    }
+    return longestStr;
   }
 
   /**
@@ -36,7 +58,10 @@ public class Build {
   public static <T> void printSelfLoopers(Vertex<T> vertex) {
   }
 
-  /**
+
+
+
+  /** // DO THIS
    * Determines whether it is possible to reach the destination airport through a series of flights
    * starting from the given airport. If the start and destination airports are the same, returns true.
    *
