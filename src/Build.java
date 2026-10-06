@@ -14,6 +14,15 @@ public class Build {
    * @param k the maximum word length (exclusive)
    */
   public static void printShortWords(Vertex<String> vertex, int k) {
+    
+    printShortWords(vertex, k, new HashSet<Vertex<String>>());
+  }
+
+  public static void printShortWords(Vertex<String> vertex, int k, Set<Vertex<String>> visited) {
+    if (vertex == null || visited.contains(vertex)) return;
+
+    
+
   }
 
   /**
