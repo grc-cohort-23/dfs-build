@@ -23,12 +23,10 @@ public class Build {
 
     visited.add(current);
 
-    if (current.data.length() < k) {
-      System.out.println(current.data);
-    }
+    if (current.data.length() < k) System.out.println(current.data);
 
     for (Vertex<String> neighbor : current.neighbors) {
-      printShortWords(current, k, visited);
+      printShortWords(neighbor, k, visited);
     }
 
   }
@@ -59,7 +57,12 @@ public class Build {
   private static <T> void printSelfLoopers(Vertex<T> current, Set<Vertex<T>> visited) {
       if (current == null || visited.contains(current)) return;
 
-      visited.
+      visited.add(current);
+
+      for (Vertex<T> neighbor : current.neighbors) {
+        if (neighbor == current) System.out.println(current);
+        printSelfLoopers(neighbor);
+      }
   }
 
   /**
