@@ -91,8 +91,6 @@ public class Build {
   }
 
 
-
-
   /** // DO THIS
    * Determines whether it is possible to reach the destination airport through a series of flights
    * starting from the given airport. If the start and destination airports are the same, returns true.
@@ -115,6 +113,35 @@ public class Build {
    * @return a set of values that cannot be reached from the starting value
    */
   public static <T> Set<T> unreachable(Map<T, List<T>> graph, T starting) {
-    return new HashSet<>();
+
+    Set<T> notVisited = new HashSet<T>();
+
+    if (graph == null || starting == null) {
+      return notVisited;
+    }
+
+    Set<T> visited = unreachable(graph, starting, new HashSet<T>());
+
+
+    for (T key : graph.keySet()) {
+      if (!visited.contains(key)) {
+        notVisited.add(key);
+      }
+    }
+
+    return notVisited;
+
+  }
+
+  private static <T> Set<T> unreachable(Map<T, List<T>> graph, T current, Set<T> visited) {
+    if (current == null || visited.contains(current) || !graph.keySet().contains(current)) return visited;
+
+    visited.add(current);
+
+    for (T neighbor : graph.get(current)) {
+      unreachable(graph, neighbor, visited);
+    }
+
+    return visited;
   }
 }
