@@ -14,6 +14,21 @@ public class Build {
    * @param k the maximum word length (exclusive)
    */
   public static void printShortWords(Vertex<String> vertex, int k) {
+    
+    printShortWords(vertex, k, new HashSet<Vertex<String>>());
+  }
+
+  private static void printShortWords(Vertex<String> current, int k, Set<Vertex<String>> visited) {
+    if (current == null || visited.contains(current)) return;
+
+    visited.add(current);
+
+    if (current.data.length() < k) System.out.println(current.data);
+
+    for (Vertex<String> neighbor : current.neighbors) {
+      printShortWords(neighbor, k, visited);
+    }
+
   }
 
 
@@ -56,6 +71,20 @@ public class Build {
    * @param <T> the type of values stored in the vertices
    */
   public static <T> void printSelfLoopers(Vertex<T> vertex) {
+
+    printSelfLoopers(vertex, new HashSet<Vertex<T>>());
+
+  }
+
+  private static <T> void printSelfLoopers(Vertex<T> current, Set<Vertex<T>> visited) {
+      if (current == null || visited.contains(current)) return;
+
+      visited.add(current);
+
+      for (Vertex<T> neighbor : current.neighbors) {
+        if (neighbor == current) System.out.println(current);
+        printSelfLoopers(neighbor);
+      }
   }
 
 
