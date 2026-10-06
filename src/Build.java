@@ -60,8 +60,11 @@ public class Build {
       visited.add(current);
 
       for (Vertex<T> neighbor : current.neighbors) {
-        if (neighbor == current) System.out.println(current);
-        printSelfLoopers(neighbor);
+        if (neighbor == current) {
+          System.out.println(current.data);
+        }
+
+        printSelfLoopers(neighbor, visited);
       }
   }
 
