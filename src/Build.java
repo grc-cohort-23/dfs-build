@@ -107,6 +107,27 @@ public class Build {
    * @return true if the destination is reachable from the start, false otherwise
    */
   public static boolean canReach(Airport start, Airport destination) {
+    Set<Airport> layovers = new HashSet<>();
+    return canReach(start, destination, layovers);
+  }
+  private static boolean canReach(Airport current, Airport destination, Set<Airport> layovers){
+    if(current == null || destination == null){
+      return false;
+    }
+    if(current == destination){
+      return true;
+    }
+    //stop from exploring same airports
+    if(layovers.contains(current)){
+      return false;
+    }
+    layovers.add(current);
+
+    for(Airport connectingPort : current.getOutboundFlights()){
+      if(canReach(connectingPort, destination, layovers)){
+        return true;
+      }
+    }
     return false;
   }
 
