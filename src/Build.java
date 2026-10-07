@@ -1,3 +1,5 @@
+import java.util.ArrayDeque;
+import java.util.Deque;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -14,8 +16,26 @@ public class Build {
    * @param k the maximum word length (exclusive)
    */
   public static void printShortWords(Vertex<String> vertex, int k) {
+    if (vertex == null) {
+      return;
+    }
+    Set<Vertex<String>> visited = new HashSet<>();
+    Deque<Vertex<String>> stack = new ArrayDeque<>();
+    stack.push(vertex); // Add the starting vertex to the stack
+    visited.add(vertex); // Mark the starting vertex as visited
+    while (!stack.isEmpty()) {
+      Vertex<String> current = stack.pop(); // Get the next vertex from the stack
+      if (current.data != null && current.data.length() < k) {
+        System.out.println(current.data); // Print the word if it meets the length criteria
+      }
+      for (Vertex<String> neighbor : current.neighbors) { // loops through the neighbors of the current vertex
+        if (neighbor != null && !visited.add(neighbor)) { // Check if the neighbor is not null + not visited
+          stack.push(neighbor); //add neighbor to stack
+        }
+      }
+    }
   }
-
+  
   /**
    * Returns the longest word reachable from the given vertex, including its own value.
    *
