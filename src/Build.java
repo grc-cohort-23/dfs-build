@@ -2,6 +2,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Stack;
 
 
 public class Build {
@@ -14,7 +15,35 @@ public class Build {
    * @param k the maximum word length (exclusive)
    */
   public static void printShortWords(Vertex<String> vertex, int k) {
+    //print the words shorter than k 
+
+    if (vertex == null) return;
+    
+    Stack<Vertex<String>> stack = new Stack<>();
+    Set<Vertex<String>> visited = new HashSet<>();
+
+    stack.push(vertex);
+    while(!stack.isEmpty()) {
+      Vertex<String> current = stack.pop();
+
+      if(!visited.contains(current)) {
+        
+        if(current.data.length() < k) {
+          System.out.println(current.data);
+        }
+
+        visited.add(current);
+
+        for(Vertex<String> neighbor : current.neighbors) {
+          if(!visited.contains(neighbor)) {
+            stack.push(neighbor);
+          }
+        }
+      }
+    }
+
   }
+
 
   /**
    * Returns the longest word reachable from the given vertex, including its own value.
@@ -23,7 +52,25 @@ public class Build {
    * @return the longest reachable word, or an empty string if the vertex is null
    */
   public static String longestWord(Vertex<String> vertex) {
-    return "";
+    Set<Vertex<String>> beenThere = new HashSet<>();
+    return longestWord(vertex, beenThere);
+  }
+  private static String longestWord(Vertex<String> vertex, Set<Vertex<String>> beenThere){
+    if(vertex == null || beenThere.contains(vertex)){
+      return "";
+    }
+    beenThere.add(vertex);
+
+    String longBoy = vertex.data;
+
+    for (Vertex<String> neighbor : vertex.neighbors){
+      String word = longestWord(neighbor, beenThere);
+
+      if(word.length()>longBoy.length()){
+        longBoy = word;
+      }
+    }
+    return longBoy;
   }
 
   /**
@@ -34,6 +81,21 @@ public class Build {
    * @param <T> the type of values stored in the vertices
    */
   public static <T> void printSelfLoopers(Vertex<T> vertex) {
+    Set<Vertex<T>> visited = new HashSet<>();
+    printSelfLoopers(vertex, visited);
+  }
+
+  private static <T> void printSelfLoopers(Vertex<T> vertex, Set<Vertex<T>> visited) {
+    if (vertex == null || visited.contains(vertex)) return;
+
+    visited.add(vertex);
+
+    if (vertex.neighbors.contains(vertex)) {
+      System.out.println(vertex.data);
+    }
+    for (Vertex<T> neighbor : vertex.neighbors) {
+      printSelfLoopers(neighbor, visited);
+    }
   }
 
   /**
@@ -45,6 +107,27 @@ public class Build {
    * @return true if the destination is reachable from the start, false otherwise
    */
   public static boolean canReach(Airport start, Airport destination) {
+    Set<Airport> layovers = new HashSet<>();
+    return canReach(start, destination, layovers);
+  }
+  private static boolean canReach(Airport current, Airport destination, Set<Airport> layovers){
+    if(current == null || destination == null){
+      return false;
+    }
+    if(current == destination){
+      return true;
+    }
+    //stop from exploring same airports
+    if(layovers.contains(current)){
+      return false;
+    }
+    layovers.add(current);
+
+    for(Airport connectingPort : current.getOutboundFlights()){
+      if(canReach(connectingPort, destination, layovers)){
+        return true;
+      }
+    }
     return false;
   }
 
@@ -58,6 +141,24 @@ public class Build {
    * @return a set of values that cannot be reached from the starting value
    */
   public static <T> Set<T> unreachable(Map<T, List<T>> graph, T starting) {
-    return new HashSet<>();
+    //keys are vertices 
+    //values are the neighbors
+    Set<T> unreachable = new HashSet<>(graph.keySet());
+    return removeReachable(graph, starting, unreachable);
+  }
+
+  private static <T> Set<T> removeReachable (Map<T, List<T>> graph, T current, Set<T> unreachable) {
+    //reachable means a connection or a connection to a connection 
+    if(!unreachable.contains(current)){
+      return unreachable;
+    }
+
+    unreachable.remove(current);
+
+    for (T neighbor : graph.get(current)) {
+      removeReachable(graph, neighbor, unreachable);
+    }
+
+    return unreachable;
   }
 }
