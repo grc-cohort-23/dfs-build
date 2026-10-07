@@ -2,6 +2,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Stack;
 
 
 public class Build {
@@ -14,7 +15,35 @@ public class Build {
    * @param k the maximum word length (exclusive)
    */
   public static void printShortWords(Vertex<String> vertex, int k) {
+    //print the words shorter than k 
+
+    if (vertex == null) return;
+    
+    Stack<Vertex<String>> stack = new Stack<>();
+    Set<Vertex<String>> visited = new HashSet<>();
+
+    stack.push(vertex);
+    while(!stack.isEmpty()) {
+      Vertex<String> current = stack.pop();
+
+      if(!visited.contains(current)) {
+        
+        if(current.data.length() < k) {
+          System.out.println(current.data);
+        }
+
+        visited.add(current);
+
+        for(Vertex<String> neighbor : current.neighbors) {
+          if(!visited.contains(neighbor)) {
+            stack.push(neighbor);
+          }
+        }
+      }
+    }
+
   }
+
 
   /**
    * Returns the longest word reachable from the given vertex, including its own value.
