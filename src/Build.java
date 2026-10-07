@@ -141,6 +141,24 @@ public class Build {
    * @return a set of values that cannot be reached from the starting value
    */
   public static <T> Set<T> unreachable(Map<T, List<T>> graph, T starting) {
-    return new HashSet<>();
+    //keys are vertices 
+    //values are the neighbors
+    Set<T> unreachable = new HashSet<>(graph.keySet());
+    return removeReachable(graph, starting, unreachable);
+  }
+
+  private static <T> Set<T> removeReachable (Map<T, List<T>> graph, T current, Set<T> unreachable) {
+    //reachable means a connection or a connection to a connection 
+    if(!unreachable.contains(current)){
+      return unreachable;
+    }
+
+    unreachable.remove(current);
+
+    for (T neighbor : graph.get(current)) {
+      removeReachable(graph, neighbor, unreachable);
+    }
+
+    return unreachable;
   }
 }
