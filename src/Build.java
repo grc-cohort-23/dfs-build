@@ -52,7 +52,25 @@ public class Build {
    * @return the longest reachable word, or an empty string if the vertex is null
    */
   public static String longestWord(Vertex<String> vertex) {
-    return "";
+    Set<Vertex<String>> beenThere = new HashSet<>();
+    return longestWord(vertex, beenThere);
+  }
+  private static String longestWord(Vertex<String> vertex, Set<Vertex<String>> beenThere){
+    if(vertex == null || beenThere.contains(vertex)){
+      return "";
+    }
+    beenThere.add(vertex);
+
+    String longBoy = vertex.data;
+
+    for (Vertex<String> neighbor : vertex.neighbors){
+      String word = longestWord(neighbor, beenThere);
+
+      if(word.length()>longBoy.length()){
+        longBoy = word;
+      }
+    }
+    return longBoy;
   }
 
   /**
