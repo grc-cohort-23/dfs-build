@@ -14,6 +14,21 @@ public class Build {
    * @param k the maximum word length (exclusive)
    */
   public static void printShortWords(Vertex<String> vertex, int k) {
+    Set<Vertex<String>> visited = new HashSet<>();
+    printShortWords(vertex, k, visited);
+  }
+
+  private static void printShortWords(Vertex<String> vertex, int k, Set<Vertex<String>> visited) {
+    if (vertex == null) return;
+    if (visited.contains(vertex)) return;
+    visited.add(vertex);
+
+    if(vertex.data.length() < k){
+      System.out.println(vertex.data);
+    }
+    for (Vertex<String> eachVertex : vertex.neighbors) {
+        printShortWords(eachVertex, k, visited); 
+    }
   }
 
   /**
@@ -23,8 +38,29 @@ public class Build {
    * @return the longest reachable word, or an empty string if the vertex is null
    */
   public static String longestWord(Vertex<String> vertex) {
-    return "";
+    if(vertex == null) return "";
+    Set<Vertex<String>> visited = new HashSet<>();
+    String largestWord = "";
+    return longestWord(vertex, visited, largestWord);
+    
   }
+  public static String longestWord(Vertex<String> vertex , Set<Vertex<String>> visited , String largestWord ) {
+    if(vertex == null) return largestWord;
+    if(visited.contains(vertex)) return largestWord;
+    visited.add(vertex);
+
+    if(vertex.data.length() > largestWord.length()){
+      largestWord = vertex.data;
+    }
+
+    for (Vertex<String> eacVertex : vertex.neighbors) {
+      largestWord =longestWord(eacVertex,visited, largestWord);
+        
+    }
+
+    return largestWord;
+  }
+
 
   /**
    * Prints the values of all vertices that are reachable from the given vertex and 
@@ -34,7 +70,25 @@ public class Build {
    * @param <T> the type of values stored in the vertices
    */
   public static <T> void printSelfLoopers(Vertex<T> vertex) {
+    if (vertex == null) return;
+    Set<Vertex<T>> visited = new HashSet<>();
+    printSelfLoopers(vertex, visited);
+
   }
+    public static <T> void printSelfLoopers(Vertex<T> vertex , Set<Vertex<T>> visited) {
+      if(vertex == null) return;
+      if(visited.contains(vertex)) return;
+      visited.add(vertex);
+      
+      if (vertex.neighbors.contains(vertex)){
+        System.out.println(vertex.data);
+      }
+      for (Vertex<T> eachVertex : vertex.neighbors) {
+        printSelfLoopers(eachVertex, visited);
+          
+      }
+
+    }
 
   /**
    * Determines whether it is possible to reach the destination airport through a series of flights
@@ -45,6 +99,30 @@ public class Build {
    * @return true if the destination is reachable from the start, false otherwise
    */
   public static boolean canReach(Airport start, Airport destination) {
+    if (start == null || destination == null) {
+      throw new NullPointerException("Airports cannot be null!");
+    }
+
+    return canReach(start, destination, new HashSet<>());
+  }
+
+  private static boolean canReach(Airport start, Airport destination, Set<Airport> visited) {
+    if (start == destination) {
+      return true;
+    }
+
+    if (visited.contains(start)) {
+      return false;
+    }
+
+    visited.add(start);
+
+    for (Airport current : start.getOutboundFlights()) {
+      if (canReach(current, destination, visited)) {
+        return true;
+      }
+    }
+
     return false;
   }
 
@@ -58,6 +136,31 @@ public class Build {
    * @return a set of values that cannot be reached from the starting value
    */
   public static <T> Set<T> unreachable(Map<T, List<T>> graph, T starting) {
-    return new HashSet<>();
+    if (graph == null) {
+      throw new NullPointerException("Cannot test a null graph!");
+    }
+
+    Set<T> visited = new HashSet<>();
+    Set<T> cannotReach = new HashSet<>(graph.keySet());
+    unreachable(graph, starting, visited);
+    cannotReach.removeAll(visited);
+
+    return cannotReach;
   }
+
+  private static <T> void unreachable(Map<T, List<T>> graph, T starting, Set<T> visited) {
+    if (visited.contains(starting)) {
+      return;
+    }
+
+    visited.add(starting);
+    if (graph.get(starting) == null) {
+      return;
+    }
+
+    for (T neighbor : graph.get(starting)) {
+      unreachable(graph, neighbor, visited);
+    }
+  }
+
 }
