@@ -60,6 +60,30 @@ public class Build {
    * @return true if the destination is reachable from the start, false otherwise
    */
   public static boolean canReach(Airport start, Airport destination) {
+    if (start == null || destination == null) {
+      throw new NullPointerException("Airports cannot be null!");
+    }
+
+    return canReach(start, destination, new HashSet<>());
+  }
+
+  public static boolean canReach(Airport start, Airport destination, Set<Airport> visited) {
+    if (start == destination) {
+      return true;
+    }
+
+    if (visited.contains(start)) {
+      return false;
+    }
+
+    visited.add(start);
+
+    for (Airport current : start.getOutboundFlights()) {
+      if (canReach(current, destination, visited)) {
+        return true;
+      }
+    }
+
     return false;
   }
 
