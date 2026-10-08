@@ -27,7 +27,7 @@ public class Build {
     }
 
     for (Vertex<String> neighbor : vertex.neighbors){
-      printShortWordsHelper(vertex, k, visited);
+      printShortWordsHelper(neighbor, k, visited);
     }
   }
   /**
@@ -37,7 +37,33 @@ public class Build {
    * @return the longest reachable word, or an empty string if the vertex is null
    */
   public static String longestWord(Vertex<String> vertex) {
-    return "";
+    if (vertex == null) {
+      return"";
+    }
+
+    Set<Vertex<String>> visited = new HashSet<>();
+
+
+    return longestWordHelper(vertex, visited);
+  }
+
+
+  private static String longestWordHelper(Vertex<String> vertex, Set<Vertex<String>> visited) {
+    if (vertex == null || visited.contains(vertex)) {
+      return "";
+    }
+    visited.add(vertex);
+
+    String longest = vertex.data;
+
+    for (Vertex<String> neighbor : vertex.neighbors) {
+      String candidate = longestWordHelper(neighbor, visited);
+
+      if (candidate.length() > longest.length()) {
+        longest = candidate;
+      }
+    }
+    return longest;
   }
 
   /**
