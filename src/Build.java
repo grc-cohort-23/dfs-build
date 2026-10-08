@@ -1,4 +1,5 @@
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -14,6 +15,20 @@ public class Build {
    * @param k the maximum word length (exclusive)
    */
   public static void printShortWords(Vertex<String> vertex, int k) {
+    printShortWords(vertex, k, new HashSet<>());
+  }
+    
+    private static void printShortWords(Vertex<String> vertex, int k, Set<Vertex<String>> visited){
+      if (vertex == null || visited.contains(vertex)) return;
+      visited.add(vertex);
+
+    if (vertex.data.length() < k) {
+      System.out.println(vertex.data);
+    }
+
+    for (Vertex<String> neighbor : vertex.neighbors) {
+      printShortWords(neighbor, k, visited);
+    }
   }
 
   /**
@@ -23,7 +38,22 @@ public class Build {
    * @return the longest reachable word, or an empty string if the vertex is null
    */
   public static String longestWord(Vertex<String> vertex) {
-    return "";
+    //Workzone
+    if(vertex == null) return "";
+    List<Vertex> traveled = new LinkedList<>();
+    return longestWord(vertex, traveled);
+  }
+
+  private static String longestWord(Vertex<String> vertex, List<Vertex> traveled){
+    if(vertex == null || traveled.contains(vertex)) return "";
+    String longest = vertex.data;
+    traveled.add(vertex);
+    for(Vertex<String> n : vertex.neighbors){
+      String check = longestWord(n, traveled);
+      if(check.length() > longest.length()) longest = check;
+    }
+    //Workzone End
+    return longest;
   }
 
   /**
@@ -34,6 +64,20 @@ public class Build {
    * @param <T> the type of values stored in the vertices
    */
   public static <T> void printSelfLoopers(Vertex<T> vertex) {
+    if(vertex == null) return;
+    List<Vertex> a = new LinkedList<>();
+    printSelfLoopers(vertex, a);
+  }
+  public static <T> void printSelfLoopers(Vertex<T> vertex, List<Vertex> traveled) {
+    if(vertex == null) return;
+    if(traveled.contains(vertex)){
+      System.out.println(vertex.data);
+      return;
+    }
+    traveled.add(vertex);
+    for (Vertex n : vertex.neighbors) {
+        printSelfLoopers(n, traveled);
+    }
   }
 
   /**
@@ -45,6 +89,21 @@ public class Build {
    * @return true if the destination is reachable from the start, false otherwise
    */
   public static boolean canReach(Airport start, Airport destination) {
+    if(start == null || destination == null) return false;
+    if(start == destination) return true;
+    List<Airport> hist = new LinkedList<>();
+    for(Airport n : start.getOutboundFlights()){
+      if(canReach(n, destination, hist) == true) return true;
+    }
+    return false;
+  }
+  public static boolean canReach(Airport start, Airport destination, List<Airport> history) {
+    if(start == null || destination == null || history.contains(start)) return false;
+    if(start == destination) return true;
+    history.add(start);
+    for(Airport n : start.getOutboundFlights()){
+      if(canReach(n, destination, history)) return true;
+    }
     return false;
   }
 
@@ -58,6 +117,28 @@ public class Build {
    * @return a set of values that cannot be reached from the starting value
    */
   public static <T> Set<T> unreachable(Map<T, List<T>> graph, T starting) {
-    return new HashSet<>();
+    if (graph == null) throw new NullPointerException("Missing Graph"); 
+
+      Set<T> visited = new HashSet<>();
+      unreachable(graph, starting, visited);
+    
+    Set<T> result = new HashSet<>();
+    for (T key : graph.keySet()) {
+      if (!visited.contains(key)) {
+        result.add(key);
+    }
+  }
+  return result;
+  }
+    private static <T> void unreachable(Map<T, List<T>> graph, T current, Set<T> visited  ) {
+      if (visited.contains(current)) return;
+      visited.add(current);
+
+      List<T> neighbors = graph.get(current);
+      if (neighbors == null) return;
+
+    for (T neighbor : graph.get(current)) {
+      unreachable(graph, neighbor, visited);
+    }
   }
 }
