@@ -88,7 +88,7 @@ public class Build {
     return canReach(start, destination, new HashSet<>());
   }
 
-  public static boolean canReach(Airport start, Airport destination, Set<Airport> visited) {
+  private static boolean canReach(Airport start, Airport destination, Set<Airport> visited) {
     if (start == destination) {
       return true;
     }
@@ -118,6 +118,31 @@ public class Build {
    * @return a set of values that cannot be reached from the starting value
    */
   public static <T> Set<T> unreachable(Map<T, List<T>> graph, T starting) {
-    return new HashSet<>();
+    if (graph == null) {
+      throw new NullPointerException("Cannot test a null graph!");
+    }
+
+    Set<T> visited = new HashSet<>();
+    Set<T> cannotReach = new HashSet<>(graph.keySet());
+    unreachable(graph, starting, visited);
+    cannotReach.removeAll(visited);
+
+    return cannotReach;
   }
+
+  private static <T> void unreachable(Map<T, List<T>> graph, T starting, Set<T> visited) {
+    if (visited.contains(starting)) {
+      return;
+    }
+
+    visited.add(starting);
+    if (graph.get(starting) == null) {
+      return;
+    }
+
+    for (T neighbor : graph.get(starting)) {
+      unreachable(graph, neighbor, visited);
+    }
+  }
+
 }
