@@ -142,6 +142,34 @@ public class Build {
    * @return a set of values that cannot be reached from the starting value
    */
   public static <T> Set<T> unreachable(Map<T, List<T>> graph, T starting) {
-    return new HashSet<>();
+    Set<T> reachable = new HashSet<>();
+
+    if (graph != null && graph.containsKey(starting)) {
+      dfsMap(graph, starting, reachable);
+    }
+
+    Set<T> unreachableSet = new HashSet<>();
+    if (graph != null) {
+      for (T node : graph.keySet()) {
+        if (!reachable.contains(node)) {
+          unreachableSet.add(node);
+        }
+      }
+    }
+    return unreachableSet;
+  }
+
+  private static <T> void dfsMap(Map<T, List<T>> graph, T current, Set<T> visited) {
+    if (current == null || visited.contains(current)) {
+      return;
+    }
+    visited.add(current);
+
+    List<T> neighbors = graph.get(current);
+    if (neighbors != null) {
+      for (T neighbor : neighbors) {
+        dfsMap(graph, neighbor, visited);
+      }
+    }
   }
 }
