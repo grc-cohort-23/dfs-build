@@ -20,7 +20,15 @@ public class Build {
 
   private static void printShortWords(Vertex<String> vertex, int k, Set<Vertex<String>> visited) {
     if (vertex == null) return;
-    // visited.add
+    if (visited.contains(vertex)) return;
+    visited.add(vertex);
+
+    if(vertex.data.length() < k){
+      System.out.println(vertex.data);
+    }
+    for (Vertex<String> eachVertex : vertex.neighbors) {
+        printShortWords(eachVertex, k, visited); 
+    }
   }
 
   /**
