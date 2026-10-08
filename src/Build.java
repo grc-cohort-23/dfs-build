@@ -136,6 +136,49 @@ public class Build {
    * @return a set of values that cannot be reached from the starting value
    */
   public static <T> Set<T> unreachable(Map<T, List<T>> graph, T starting) {
-    return new HashSet<>();
+   Set<T> reachable = new HashSet<>();
+   Deque<T> stack = new ArrayDeque<>();
+    stack.push(starting); // add start val to stack
+    reachable.add(starting); // mark start val as reachable
+    while (!stack.isEmpty()) { // while stack is not empty
+      T current = stack.pop(); // get next val from stack
+      List<T> neighbors = graph.get(current); // get neighbors of current val
+      if (neighbors != null) { // check if neighbors is not null
+        continue; // if neighbors is null -> skip to next 
+ }
+// for (T neighbor : neighbors) { // loop through neighbors of current val
+//           if (neighbor != null && reachable.add(neighbor)) { // check if neighbor is not null + not reachable
+//             stack.push(neighbor); // add neighbor to stack
+//           }
+//         }
+//       }
+//     }
+//     Set<T> unreachable = new HashSet<>(graph.keySet()); // create set of all keys in graph
+//     unreachable.removeAll(reachable); // remove all reachable vals from set of all keys
+//     return unreachable; // return set of unreachable vals
+//   }
+// }
+
+for (T neighbor : neighbors) {
+  if (reachable.add(neighbor)) { // check if neighbor is not already reachable
+    stack.push(neighbor); // add neighbor to stack
   }
 }
+    }
+    Set<T> result = new HashSet<>();
+    for (T key : graph.keySet()) {
+      if (!reachable.contains(key)) {
+        result.add(key); // add unreachable key to result set
+      }
+    }
+  for (List<T> neighbors : graph.values()) {
+    for (T neighbor : neighbors) {
+      if (!reachable.contains(neighbor)) {
+        result.add(neighbor); // add unreachable neighbor to result set
+      }
+    }
+  }
+    return result; // return set of unreachable vals
+  }
+}
+      
