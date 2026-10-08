@@ -35,7 +35,7 @@ public class Build {
       }
     }
   }
-  
+
   /**
    * Returns the longest word reachable from the given vertex, including its own value.
    *
@@ -43,7 +43,25 @@ public class Build {
    * @return the longest reachable word, or an empty string if the vertex is null
    */
   public static String longestWord(Vertex<String> vertex) {
-    return "";
+    if (vertex == null) return ""; {
+  }
+  String longest = "";
+    Set<Vertex<String>> visited = new HashSet<>();
+    Deque<Vertex<String>> stack = new ArrayDeque<>();
+    stack.push(vertex);
+    visited.add(vertex);
+    while (!stack.isEmpty()) {
+      Vertex<String> current = stack.pop();
+      if (current.data != null && current.data.length() > longest.length()) {
+        longest = current.data;
+      }
+      for (Vertex<String> neighbor : current.neighbors) {
+        if (neighbor != null && visited.add(neighbor)) {
+          stack.push(neighbor);
+        }
+      }
+    }
+    return longest;
   }
 
   /**
