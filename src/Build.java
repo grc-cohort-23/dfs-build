@@ -14,6 +14,7 @@ public class Build {
    * @param k the maximum word length (exclusive)
    */
   public static void printShortWords(Vertex<String> vertex, int k) {
+    
   }
 
   /**
@@ -23,7 +24,29 @@ public class Build {
    * @return the longest reachable word, or an empty string if the vertex is null
    */
   public static String longestWord(Vertex<String> vertex) {
-    return "";
+    if (vertex == null){
+      return "";
+    }
+
+    return longestWord(vertex, new HashSet<>());
+  }
+  private static String longestWord(Vertex<String> vertex, Set<Vertex<String>> visited){
+    if(visited.contains(vertex)){
+      return "";
+    }
+    visited.add(vertex);
+
+    String longest = vertex.data;
+
+    for (Vertex<String> neighbor : vertex.neighbors){
+      String candidate = longestWord(neighbor, visited);
+
+      if (candidate.length() > longest.length()){
+        longest = candidate;
+      }
+    }
+
+    return longest;
   }
 
   /**
