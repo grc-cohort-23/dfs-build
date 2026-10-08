@@ -38,8 +38,29 @@ public class Build {
    * @return the longest reachable word, or an empty string if the vertex is null
    */
   public static String longestWord(Vertex<String> vertex) {
-    return "";
+    if(vertex == null) return "";
+    Set<Vertex<String>> visited = new HashSet<>();
+    String largestWord = "";
+    return longestWord(vertex, visited, largestWord);
+    
   }
+  public static String longestWord(Vertex<String> vertex , Set<Vertex<String>> visited , String largestWord ) {
+    if(vertex == null) return largestWord;
+    if(visited.contains(vertex)) return largestWord;
+    visited.add(vertex);
+
+    if(vertex.data.length() > largestWord.length()){
+      largestWord = vertex.data;
+    }
+
+    for (Vertex<String> eacVertex : vertex.neighbors) {
+      largestWord =longestWord(eacVertex,visited, largestWord);
+        
+    }
+
+    return largestWord;
+  }
+
 
   /**
    * Prints the values of all vertices that are reachable from the given vertex and 
