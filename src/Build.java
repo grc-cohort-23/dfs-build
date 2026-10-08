@@ -70,7 +70,25 @@ public class Build {
    * @param <T> the type of values stored in the vertices
    */
   public static <T> void printSelfLoopers(Vertex<T> vertex) {
+    if (vertex == null) return;
+    Set<Vertex<T>> visited = new HashSet<>();
+    printSelfLoopers(vertex, visited);
+
   }
+    public static <T> void printSelfLoopers(Vertex<T> vertex , Set<Vertex<T>> visited) {
+      if(vertex == null) return;
+      if(visited.contains(vertex)) return;
+      visited.add(vertex);
+      
+      if (vertex.neighbors.contains(vertex)){
+        System.out.println(vertex.data);
+      }
+      for (Vertex<T> eachVertex : vertex.neighbors) {
+        printSelfLoopers(eachVertex, visited);
+          
+      }
+
+    }
 
   /**
    * Determines whether it is possible to reach the destination airport through a series of flights
