@@ -14,16 +14,53 @@ public class Build {
    * @param k the maximum word length (exclusive)
    */
   public static void printShortWords(Vertex<String> vertex, int k) {
+    
+    printShortWords(vertex, k, new HashSet<Vertex<String>>());
   }
 
-  /**
+  private static void printShortWords(Vertex<String> current, int k, Set<Vertex<String>> visited) {
+    if (current == null || visited.contains(current)) return;
+
+    visited.add(current);
+
+    if (current.data.length() < k) System.out.println(current.data);
+
+    for (Vertex<String> neighbor : current.neighbors) {
+      printShortWords(neighbor, k, visited);
+    }
+
+  }
+
+
+
+
+  /** // DO THIS
    * Returns the longest word reachable from the given vertex, including its own value.
    *
    * @param vertex the starting vertex
    * @return the longest reachable word, or an empty string if the vertex is null
    */
   public static String longestWord(Vertex<String> vertex) {
-    return "";
+    if(vertex == null) return "";
+    Set<Vertex<String>> visited = new HashSet<>();
+    return longestWordHelper(vertex,visited);
+  }
+
+  private static String longestWordHelper(Vertex<String> vertex, Set<Vertex<String>> visited ) {
+
+    if(visited.contains(vertex)) {
+      return "";
+    }
+    visited.add(vertex);
+    String longestStr = vertex.data;
+
+    for(Vertex<String> wordNeighbor : vertex.neighbors) {
+      String result = longestWordHelper(wordNeighbor, visited);
+      if(longestStr.length() < result.length()) {
+        longestStr = result;
+      }
+    }
+    return longestStr;
   }
 
   /**
@@ -34,9 +71,27 @@ public class Build {
    * @param <T> the type of values stored in the vertices
    */
   public static <T> void printSelfLoopers(Vertex<T> vertex) {
+
+    printSelfLoopers(vertex, new HashSet<Vertex<T>>());
+
   }
 
-  /**
+  private static <T> void printSelfLoopers(Vertex<T> current, Set<Vertex<T>> visited) {
+      if (current == null || visited.contains(current)) return;
+
+      visited.add(current);
+
+      for (Vertex<T> neighbor : current.neighbors) {
+        if (neighbor == current) {
+          System.out.println(current.data);
+        }
+
+        printSelfLoopers(neighbor, visited);
+      }
+  }
+
+
+  /** // DO THIS
    * Determines whether it is possible to reach the destination airport through a series of flights
    * starting from the given airport. If the start and destination airports are the same, returns true.
    *
@@ -45,6 +100,19 @@ public class Build {
    * @return true if the destination is reachable from the start, false otherwise
    */
   public static boolean canReach(Airport start, Airport destination) {
+
+    return canReach(start, destination,new HashSet<>());
+  }
+  public static boolean canReach(Airport current, Airport destination, Set<Airport> visited) {
+    if (current == null || visited.contains(current)) return false;
+    if(current == destination) return true;
+    visited.add(current);
+
+    for(Airport next : current.getOutboundFlights()) {
+      if(canReach(next, destination, visited)) {
+        return true;
+      }
+    }
     return false;
   }
 
@@ -58,6 +126,35 @@ public class Build {
    * @return a set of values that cannot be reached from the starting value
    */
   public static <T> Set<T> unreachable(Map<T, List<T>> graph, T starting) {
-    return new HashSet<>();
+
+    Set<T> notVisited = new HashSet<T>();
+
+    if (graph == null || starting == null) {
+      return notVisited;
+    }
+
+    Set<T> visited = unreachable(graph, starting, new HashSet<T>());
+
+
+    for (T key : graph.keySet()) {
+      if (!visited.contains(key)) {
+        notVisited.add(key);
+      }
+    }
+
+    return notVisited;
+
+  }
+
+  private static <T> Set<T> unreachable(Map<T, List<T>> graph, T current, Set<T> visited) {
+    if (current == null || visited.contains(current) || !graph.keySet().contains(current)) return visited;
+
+    visited.add(current);
+
+    for (T neighbor : graph.get(current)) {
+      unreachable(graph, neighbor, visited);
+    }
+
+    return visited;
   }
 }
