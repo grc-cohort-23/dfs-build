@@ -17,9 +17,27 @@ public class Build {
     if(vertex ==null){
       return;
     }
-
     printShortWords(vertex, k, new HashSet<>());
+  }
 
+    private static void printShortWords(
+    Vertex<String> vertex,
+    int k,
+    Set<Vertex<String>> visited) {
+
+      if(visited.contains(vertex)){
+        return;
+      }
+      visited.add(vertex);
+
+      if(vertex.data.length() < k){
+        System.out.println(vertex.data);
+      }
+
+      for(Vertex<String> neighbor: vertex.neighbors ){
+         printShortWords(neighbor, k, visited);
+
+      }
   }
 
   /**
